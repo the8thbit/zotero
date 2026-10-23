@@ -1913,7 +1913,7 @@ var CollectionTree = class CollectionTree extends LibraryTree {
 					// Dragging within same library
 					if (treeRow.ref.libraryID == draggedCollection.libraryID) {
 						// Collections cannot be dropped on themselves
-						if (id == treeRow.ref.id) {
+						if (treeRow.isCollection() && id == treeRow.ref.id) {
 							return false;
 						}
 					

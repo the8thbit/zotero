@@ -1610,6 +1610,26 @@ describe("Zotero.CollectionTree", function () {
 		
 		
 		describe("with collections", function () {
+			it("should allow dropping a collection on a library with the same id", async function () {
+				var collection = await createDataObject('collection');
+				var libraryRow = cv.getRow(cv.getRowIndexByID('L' + collection.libraryID));
+				var collidingLibraryRow = new Zotero.CollectionTreeRow(
+					cv,
+					libraryRow.type,
+					{ id: collection.id, libraryID: collection.libraryID },
+					libraryRow.level,
+					libraryRow.isOpen
+				);
+				var getRowStub = sinon.stub(cv, 'getRow').returns(collidingLibraryRow);
+				try {
+					assert.isTrue(await canDrop('collection', 'L' + collection.libraryID, [collection.id]));
+				}
+				finally {
+					getRowStub.restore();
+				}
+				assert.isFalse(await canDrop('collection', 'C' + collection.id, [collection.id]));
+			});
+
 			it("should make a subcollection top-level", async function () {
 				var collection1 = await createDataObject('collection', { name: "A" }, { skipSelect: true });
 				var collection2 = await createDataObject('collection', { name: "C" }, { skipSelect: true });
